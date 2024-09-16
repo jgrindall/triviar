@@ -2,16 +2,20 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import '../stylesheets/FormView.css';
 
-class FormView extends Component {
-  constructor(props) {
-    super();
-    this.state = {
+const getInitialState = () => {
+  return {
       question: '',
       answer: '',
       difficulty: 1,
       category: 1,
       categories: {},
-    };
+  }
+}
+
+class FormView extends Component {
+  constructor(props) {
+    super();
+    this.state = getInitialState()
   }
 
   componentDidMount() {
@@ -47,7 +51,9 @@ class FormView extends Component {
       },
       crossDomain: true,
       success: (result) => {
+        this.setState(getInitialState())
         document.getElementById('add-question-form').reset();
+        alert("Question added")
         return;
       },
       error: (error) => {
@@ -71,15 +77,15 @@ class FormView extends Component {
           onSubmit={this.submitQuestion}
         >
           <label>
-            Question
+            <span>Question</span>
             <input type='text' name='question' onChange={this.handleChange} />
           </label>
           <label>
-            Answer
+            <span>Answer</span>
             <input type='text' name='answer' onChange={this.handleChange} />
           </label>
           <label>
-            Difficulty
+            <span>Difficulty</span>
             <select name='difficulty' onChange={this.handleChange}>
               <option value='1'>1</option>
               <option value='2'>2</option>
@@ -89,7 +95,7 @@ class FormView extends Component {
             </select>
           </label>
           <label>
-            Category
+            <span>Category</span>
             <select name='category' onChange={this.handleChange}>
               {Object.keys(this.state.categories).map((id) => {
                 return (

@@ -20,7 +20,7 @@
 }
 
 .button {
-    width: 100px;
+    min-width: 100px;
     margin-top: 5px;
     background-color: dodgerblue;
     color: white;
@@ -30,12 +30,13 @@
 
 div.button {
     margin-top: 20px;
-    margin-left: calc(50% - 50px);
+    padding:10px;
+    font-size: larger;
 }
 
-.quiz-question {
+.quiz-question , .correct, .wrong {
+    font-size: larger;
     margin: 12px;
-    font-size: 24px;
 }
 
 .correct {

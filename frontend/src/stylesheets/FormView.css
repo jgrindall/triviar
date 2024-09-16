@@ -1,7 +1,24 @@
 .form-view > label {
   padding: 0px 0px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:10px;
+}
+
+.form-view > label > span{
+  min-width: 100px;
 }
 
 #add-form {
   text-align: center;
+}
+
+.form-view > label > input, .form-view > label >select{
+  min-width: 250px;
+}
+
+.form-view > label > select {
+  padding: 10px;
+  font-size: larger;
 }
