@@ -344,3 +344,8 @@ python test_flaskr.py
   "currentCategory": "Entertainment"
 }
 ```
+
+
+
+$ flake8 ./
+$ flake8 --max-line-length 128 ./

@@ -1,7 +1,13 @@
 from sqlalchemy import Column, String, Integer, ForeignKey
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+import os
 
-default_uri = 'postgresql://postgres:thisismypassword@localhost:5432/trivia'
+load_dotenv()
+
+PGPASSWORD = os.getenv("PGPASSWORD")
+
+default_uri = 'postgresql://postgres:' + PGPASSWORD + '@localhost:5432/trivia'
 
 db = SQLAlchemy()
 
@@ -9,10 +15,12 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 """
-def setup_db(app, database_path = default_uri):
+
+
+def setup_db(app, database_path=default_uri):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["DEBUG"] = True
+    app.config["DEBUG"] = False
     app.app_context().push()
     db.app = app
     db.init_app(app)
@@ -27,7 +35,8 @@ class Question(db.Model):
     answer = Column(String, unique=True, nullable=False)
     difficulty = Column(Integer, nullable=False)
     category = db.Column(db.Integer, ForeignKey('categories.id', ondelete='SET NULL', onupdate='CASCADE'))
-    matching_category = db.relationship('Category', backref = db.backref('questions', cascade="all, delete-orphan", lazy=True))
+    backref = db.backref('questions', cascade="all, delete-orphan", lazy=True)
+    matching_category = db.relationship('Category', backref=backref)
 
     def __init__(self, question, answer, category, difficulty):
         self.question = question
@@ -55,10 +64,8 @@ class Question(db.Model):
             'difficulty': self.difficulty
         }
 
-
     """
     validate_question(data)
-        
     """
     @staticmethod
     def get_validated_question(data):
@@ -70,17 +77,20 @@ class Question(db.Model):
         difficulty = int(data["difficulty"])
         if not question or not answer or not category or not difficulty:
             return None
-        
-        return Question(question=question, answer=answer, category=category, difficulty=difficulty)
 
-
-
+        return Question(
+            question=question,
+            answer=answer,
+            category=category,
+            difficulty=difficulty
+        )
 
 
 """
 Category
-
 """
+
+
 class Category(db.Model):
     __tablename__ = 'categories'
 
@@ -95,5 +105,3 @@ class Category(db.Model):
             'id': self.id,
             'type': self.type
         }
-
-
