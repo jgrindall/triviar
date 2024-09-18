@@ -24,7 +24,7 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
         return response
-    
+
     init_routes(app)
 
     return app

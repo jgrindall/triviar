@@ -58,7 +58,6 @@ class QuestionsTestCase(unittest.TestCase):
         self.assertEqual(data['total_questions'], 19)
         self.assertEqual(len(data['questions']), 0)
 
-
     def test_search_questions(self):
         res = self.client().post('/questions/search', json={"searchTerm": "Which"})
         data = json.loads(res.data)
@@ -67,15 +66,236 @@ class QuestionsTestCase(unittest.TestCase):
         self.assertTrue(len(data['questions']), 7)
         self.assertTrue("Which" in data['questions'][0]['question'])
 
+    """
+    Missing searchTerm
+    """
     def test_search_questions_invalid(self):
 
         res = self.client().post('/questions/search', json={"searchterm": "Which"})
         self.assertEqual(res.status_code, 422)
+        data = json.loads(res.data)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
 
         res = self.client().post('/questions/search', json={})
+        data = json.loads(res.data)
         self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
 
+    """
+    Try to Add different kinds of invalid quesion
+    """
+    def test_add_invalid_questions(self):
 
+        """
+        Helper function
+        """
+        def get_total():
+            res = self.client().get('/questions')
+            data = json.loads(res.data)
+            return data['total_questions']
+
+        total_questions = get_total()
+
+        # missing question
+        res = self.client().post('/questions', json={
+            "answer": "Paris",
+            "category": 3,
+            "difficulty": 2
+        })
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+        # missing difficulty
+        res = self.client().post('/questions', json={
+            "answer": "Paris",
+            "question": "What is the capital of France?",
+            "category": 3
+        })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+        # empty question
+        res = self.client().post('/questions', json={
+            "answer": "Paris",
+            "question": "",
+            "category": 3,
+            "difficulty": 2
+        })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+        # empty question and answer when stripped
+        res = self.client().post('/questions', json={
+            "answer": "  ",
+            "question": "  ",
+            "category": 3,
+            "difficulty": 2
+        })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+        # not ints
+        res = self.client().post('/questions', json={
+            "answer": "  ",
+            "question": "  ",
+            "category": "a",
+            "difficulty": 2
+        })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+        # not ints
+        res = self.client().post('/questions', json={
+            "answer": "  ",
+            "question": "  ",
+            "category": 2,
+            "difficulty": "HARD"
+        })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+        # difficulty wrong
+        res = self.client().post('/questions', json={
+            "answer": "Paris",
+            "question": "What is the capital of France?",
+            "category": 2,
+            "difficulty": -10
+        })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+    """
+    Constraint error
+    """
+    def test_add_invalid_category(self):
+
+        """
+        Helper function
+        """
+        def get_total():
+            res = self.client().get('/questions')
+            data = json.loads(res.data)
+            return data['total_questions']
+
+        total_questions = get_total()
+
+        res = self.client().post('/questions', json={
+            "answer": "Paris",
+            "question": "What is the capital of France?",
+            "category": 10000,
+            "difficulty": 2
+        })
+
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 422)
+        self.assertEqual(data['message'], "Badly formatted request")
+        # unchanged - failed to add
+        self.assertEqual(get_total(), total_questions)
+
+    def test_delete_invalid_questions(self):
+        res = self.client().delete('/questions/10000000000000')
+        data = json.loads(res.data)
+
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 404)
+        self.assertEqual(data['message'], "Resource not found")
+
+    def test_add_valid_and_delete_questions(self):
+
+        def get_total():
+            res = self.client().get('/questions')
+            data = json.loads(res.data)
+            return data['total_questions']
+
+        def get_in_category_3():
+            res = self.client().get('/categories/3/questions')
+            data = json.loads(res.data)
+            return len(data['questions'])
+
+        total_questions = get_total()
+        num_in_category_3 = get_in_category_3()
+
+        # valid questions
+        res = self.client().post('/questions', json={
+            "answer": "Paris",
+            "question": "What is the capital of France?",
+            "category": 3,
+            "difficulty": 2
+        })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        id1 = data['question_id']
+        self.assertTrue(id1)
+        self.assertEqual(data['success'], True)
+
+        res = self.client().post('/questions', json={
+            "answer": "London",
+            "question": "What is the capital of the UK?",
+            "category": 3,
+            "difficulty": 2
+        })
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        id2 = data['question_id']
+        self.assertTrue(id2)
+
+        # check the total
+        self.assertEqual(get_total(), total_questions + 2)
+        self.assertEqual(get_in_category_3(), num_in_category_3 + 2)
+
+        # delete the questions
+        res = self.client().delete('/questions/' + str(id1))
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+        res = self.client().delete('/questions/' + str(id2))
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+        self.assertEqual(get_total(), total_questions)
+        self.assertEqual(get_in_category_3(), num_in_category_3)
 
 
 class CategoriesTestCase(unittest.TestCase):
@@ -107,6 +327,9 @@ class CategoriesTestCase(unittest.TestCase):
         res = self.client().get('/categories/10000/questions')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 404)
+        self.assertEqual(data['message'], "Resource not found")
 
 
 class QuizTestCase(unittest.TestCase):
@@ -121,7 +344,7 @@ class QuizTestCase(unittest.TestCase):
     def test_quiz(self):
         previous_questions = []
         res = self.client().post('/quiz', json={
-            "previous_questions": previous_questions, 
+            "previous_questions": previous_questions,
             "quiz_category_id": 1
         })
 
@@ -138,7 +361,7 @@ class QuizTestCase(unittest.TestCase):
         for i in range(1000):
 
             res = self.client().post('/quiz', json={
-                "previous_questions": previous_questions, 
+                "previous_questions": previous_questions,
                 "quiz_category_id": 2
             })
 
@@ -150,19 +373,17 @@ class QuizTestCase(unittest.TestCase):
             self.assertEqual(data['question']['category'], 2)
             self.assertIn(data['question']['id'], [18, 19])
 
-
     def test_quiz_missing_category_id(self):
         previous_questions = []
         res = self.client().post('/quiz', json={
             "previous_questions": previous_questions
         })
-        
+
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
-
 
     def test_quiz_missing_category_id_with_prev(self):
         previous_questions = [2, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
@@ -171,14 +392,13 @@ class QuizTestCase(unittest.TestCase):
             res = self.client().post('/quiz', json={
                 "previous_questions": previous_questions
             })
-            
+
             data = json.loads(res.data)
 
             self.assertEqual(res.status_code, 200)
             self.assertEqual(data['success'], True)
             self.assertTrue(data['question'])
             self.assertIn(data['question']['id'], [21, 22, 23])
-
 
 
 # Make the tests conveniently executable

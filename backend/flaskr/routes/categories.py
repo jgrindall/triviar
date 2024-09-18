@@ -3,8 +3,9 @@ Categories controller
 """
 
 from flask import abort, jsonify
-from models import Category, Question, db
+from models import Category, db
 from werkzeug.exceptions import HTTPException
+
 
 def _abort(e):
     if isinstance(e, HTTPException):
@@ -18,7 +19,6 @@ def setup(app):
     An endpoint to handle GET requests
     for all available categories.
     """
-
     @app.route("/categories", methods=["GET"])
     def get_categories():
         try:
@@ -44,14 +44,11 @@ def setup(app):
     def get_questions_for_category(category_id):
         try:
             category = db.session.get(Category, category_id)
-            
-            print("looing up", category_id, category, flush=True)
 
             if category is None:
                 abort(404)
             else:
-                questions = category.questions
-                questions_formatted = [q.format() for q in questions]
+                questions_formatted = [q.format() for q in category.questions]
 
                 return jsonify({
                     "success": True,

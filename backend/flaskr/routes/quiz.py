@@ -45,7 +45,7 @@ def setup(app):
             question = query.first()
 
             if question is None:
-                #perhaps we have done all the questions. This is a success
+                # Perhaps we have done all the questions. This is a success case.
                 return jsonify({
                     "success": True,
                     "question": None
