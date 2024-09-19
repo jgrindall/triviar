@@ -58,7 +58,6 @@ def setup(app):
             })
 
         except Exception as e:
-            print(e, flush=True)
             _abort(e)
 
     """
@@ -67,7 +66,6 @@ def setup(app):
 
     @app.route("/questions/<int:question_id>", methods=["DELETE"])
     def delete_question(question_id):
-        print("delete_question", flush=True)
         try:
 
             question = (
@@ -88,7 +86,6 @@ def setup(app):
 
         except Exception as e:
             db.session.rollback()
-            print(e, flush=True)
             _abort(e)
 
     """
@@ -98,7 +95,6 @@ def setup(app):
     """
     @app.route("/questions", methods=["POST"])
     def create_question():
-        print("create_question", flush=True)
         try:
             data = request.get_json()
             new_question = Question.get_validated_question(data)
@@ -120,7 +116,6 @@ def setup(app):
                     abort(422)
 
         except Exception as e:
-            print(e, flush=True)
             db.session.rollback()
             _abort(e)
 
@@ -156,5 +151,4 @@ def setup(app):
                 })
 
         except Exception as e:
-            print(e, flush=True)
             _abort(e)

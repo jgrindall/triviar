@@ -1,7 +1,11 @@
 #!/bin/bash
 
-export PGUSER=postgres
-export PGPASSWORD=thisismypassword
+
+echo "Setting up environment variables from .env"
+
+set -o allexport
+source .env
+set +o allexport
 
 echo "Drop and create database forcefully"
 

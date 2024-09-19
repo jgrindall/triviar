@@ -3,132 +3,106 @@
 
 ## Introduction
 
-A completed quiz API with simple front end.
+A completed quiz API with simple React front end.
 
-1. Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer.
-2. Delete questions.
-3. Add questions and require that they include question and answer text.
-4. Search for questions based on a text query string.
-5. Play the quiz game, randomizing either all questions or within a specific category.
+Functionality includes:
+
+1. Display all questions.
+2. Display questions by category.
+3. Show difficulty ratings.
+4. Show/hide the answer
+5. Delete a question.
+6. Add questions and validate them (eg. they have an answer and a difficulty)
+7. Search for questions based on a text query string.
+8. Play the quiz game, randomizing either all questions or within a specific category.
 
 
-The [backend](./backend/README.md) directory contains a partially completed Flask and SQLAlchemy server. You will work primarily in `__init__.py` to define your endpoints and can reference models.py for DB and SQLAlchemy setup. These are the files you'd want to edit in the backend:
+## Back end
 
-1. `backend/flaskr/__init__.py`
-2. `backend/test_flaskr.py`
+### Installing dependencies
 
+The important dependencies are:
 
-## Installing dependencies
+- [Flask](http://flask.pocoo.org/)
 
-1. **Python 3.7** - Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
+- [SQLAlchemy](https://www.sqlalchemy.org/)
 
-2. **Virtual Environment** - We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organized. Instructions for setting up a virual environment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#)
 
-3. **PIP Dependencies** - Once your virtual environment is setup and running, install the required dependencies by navigating to the `/backend` directory and running:
+To install the dependencies, ensure you have python 3.7+ installed and run
 
-```bash
-pip install -r requirements.txt
+```
+$ pip install -r requirements.txt
 ```
 
-#### Key Pip Dependencies
+from inside the backend directory
 
-- [Flask](http://flask.pocoo.org/) is a lightweight backend microservices framework. Flask is required to handle requests and responses.
 
-- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use to handle the lightweight SQL database. You'll primarily work in `app.py`and can reference `models.py`.
-
-- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross-origin requests from our frontend server.
 
 ### Set up the Database
 
-With Postgres running, create a `trivia` database:
+Ensure you have postgres 4.x installed.
 
-```bash
-createdb trivia
+Find the setup.sh script in the backend directory.
+
+Change these lines to match your user and password:
+
+```
+export PGUSER=postgres
+export PGPASSWORD=thisismypassword
 ```
 
-Populate the database using the `trivia.psql` file provided. From the `backend` folder in terminal run:
+Run
 
-```bash
-psql trivia < trivia.psql
 ```
+$  ./setup.sh
+```
+
+This will drop any database you already have called "trivia", make a new one and import the test data
+
 
 ### Run the Server
 
-From within the `./src` directory first ensure you are working using your created virtual environment.
+1. cd backend
+2. Run ./run.sh
 
-To run the server, execute:
-
-```bash
-flask run --reload
-```
+This will set appropriate environment variables and run "python -m flask run -p 5000"
 
 
 
+## Front end
 
-1. **Installing Node and NPM**
-   This project depends on Nodejs and Node Package Manager (NPM). Before continuing, you must download and install Node (the download includes NPM) from [https://nodejs.com/en/download](https://nodejs.org/en/download/).
+The frontend app is built using create-react-app.
 
-2. **Installing project dependencies**
-   This project uses NPM to manage software dependencies. NPM Relies on the package.json file located in the `frontend` directory of this repository. After cloning, open your terminal and run:
+1. install nodejs [https://nodejs.com/en/download](https://nodejs.org/en/download/).
 
-```bash
-npm install
-```
+2. install front end dependencies
 
-> _tip_: `npm i`is shorthand for `npm install``
+cd frontend
 
-## Required Tasks
+npm i
 
-### Running Your Frontend in Dev Mode
-
-The frontend app was built using create-react-app. In order to run the app in development mode use `npm start`. You can change the script in the `package.json` file.
+npm run start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser. The page will reload if you make edits.
 
-```bash
-npm start
-```
 
+## Testing
 
+1. cd backend
 
+2. ./test.sh
 
-
-## Start server
-
-
+This will drop any database you already have called "trivia_test", make a new one and import the test data
+Then it will run "python -m test_flaskr"
 
 
 ## API Documentation
 
+### Questions
+### Categories
+### Quiz
 
-
-
-## About the Stack
-
-We started the full stack application for you. It is designed with some key functional areas:
-
-The [frontend](./frontend/README.md) directory contains a complete React frontend to consume the data from the Flask server. If you have prior experience building a frontend application, you should feel free to edit the endpoints as you see fit for the backend you design. If you do not have prior experience building a frontend application, you should read through the frontend code before starting and make notes regarding:
-
-1. What are the end points and HTTP methods the frontend is expecting to consume?
-2. How are the requests from the frontend formatted? Are they expecting certain parameters or payloads?
-
-Pay special attention to what data the frontend is expecting from each API response to help guide how you format your API. The places where you may change the frontend behavior, and where you should be looking for the above information, are marked with `TODO`. These are the files you'd want to edit in the frontend:
-
-1. `frontend/src/components/QuestionView.js`
-2. `frontend/src/components/FormView.js`
-3. `frontend/src/components/QuizView.js`
-
-By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
-
-
-
-
-
-
-
-
-
-### Documentation Example
 
 `GET '/api/v1.0/categories'`
 
@@ -146,35 +120,6 @@ By making notes ahead of time, you will practice the core skill of being able to
   "6": "Sports"
 }
 ```
-
-## Testing
-
-Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
-
-To deploy the tests, run
-
-```bash
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
-python test_flaskr.py
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

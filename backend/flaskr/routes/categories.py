@@ -34,7 +34,6 @@ def setup(app):
             })
 
         except Exception as e:
-            print(e, flush=True)
             _abort(e)
 
     """
@@ -56,5 +55,4 @@ def setup(app):
                 })
 
         except Exception as e:
-            print(e, flush=True)
             _abort(e)

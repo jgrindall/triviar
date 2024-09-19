@@ -6,8 +6,9 @@ import os
 load_dotenv()
 
 PGPASSWORD = os.getenv("PGPASSWORD")
+PGUSER = os.getenv("PGUSER")
 
-default_uri = 'postgresql://postgres:' + PGPASSWORD + '@localhost:5432/trivia'
+default_uri = 'postgresql://' + PGUSER + ':' + PGPASSWORD + '@localhost:5432/trivia'
 
 db = SQLAlchemy()
 
