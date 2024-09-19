@@ -15,7 +15,18 @@ def setup(app):
             "message": "Resource not found"
         })
         return (json, 404)
+    
 
+    @app.errorhandler(405)
+    def not_found_error(error):
+        json = jsonify({
+            "success": False,
+            "error": 405,
+            "message": "Method Not Allowed"
+        })
+        return (json, 405)
+    
+    
     @app.errorhandler(422)
     def request_error(error):
         json = jsonify({

@@ -51,7 +51,11 @@ class FormView extends Component {
       },
       crossDomain: true,
       success: (result) => {
-        this.setState(getInitialState())
+        this.setState({
+          ...this.state,
+          question: '',
+          answer: '',
+        })
         document.getElementById('add-question-form').reset();
         alert("Question added")
         return;
