@@ -46,9 +46,10 @@ Create a .env file in the backend directory with the contents:
 
 ```
 PGPASSWORD=<your password>
-PGUSER=<your user>
+PGUSER=postgres
 ```
 
+If your user is not called "postgres" you will need to edit the trivia.psql file (see below)
 
 ### Set up the Database
 
@@ -60,7 +61,7 @@ Run
 $ ./setup.sh
 ```
 
-This will drop any database you already have called "trivia", make a new one and import the test data from the psql file.
+This will drop any database you already have called "trivia", make a new one and import the test data from the trivia.psql file.
 
 
 
