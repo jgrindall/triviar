@@ -17,6 +17,11 @@ Functionality includes:
 8. Play the quiz game, randomizing either all questions or within a specific category.
 
 
+## Walkthrough video
+
+- [Video](https://github.com/jgrindall/triviar/blob/master/walkthrough.mp4)
+
+
 ## Back end
 
 ### Installing dependencies
@@ -137,7 +142,6 @@ From frontend\node_modules\css-has-pseudo\node_modules\postcss-selector-parser\d
 ```
 
 Running the commands inside a regular Windows cmd prompt fixed this for me
-
 
 
 
