@@ -39,6 +39,10 @@ $ pip install -r requirements.txt
 
 from inside the backend directory
 
+Note: Tested on Python 3.12.5
+
+
+
 
 ### Setting up secrets
 
@@ -121,6 +125,22 @@ $ npm run start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+
+## Troubleshooting in Windows
+
+Build issue when running npm i & npm run start inside git bash.
+
+```
+Error: Cannot find module '../util'
+From frontend\node_modules\css-has-pseudo\node_modules\postcss-selector-parser\dist\selectors\node.js
+```
+
+Running the commands inside a regular Windows cmd prompt fixed this for me
+
+
+
+
 
 
 
